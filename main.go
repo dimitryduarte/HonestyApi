@@ -15,10 +15,11 @@ import (
 var err error
 var users models.Users
 var products models.Product
-var dsn = "test_user:123456@tcp(127.0.0.1:3306)/honestyapp"
+
+//var dsn = "test_user:123456@tcp(127.0.0.1:3306)/honestyapp"
 var tempToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhvbmVzdHlib3hAeWFob28uY29tLmJyIiwibmFtZSI6IkhvbmVzdHlCb3giLCJpYXQiOjgwMDEyMzIwMjN9.d6EzSrGrQkwtscnY0KmFfOnj3arratQoEBG1-gk_ZdA"
 
-//var dsn = "bc3ac486906125:9da0ccaf@us-cdbr-east-04.cleardb.com/heroku_94037f830475225?reconnect=true"
+var dsn = "bc3ac486906125:9da0ccaf@us-cdbr-east-04.cleardb.com/heroku_94037f830475225?reconnect=true"
 
 // função principal
 func main() {
