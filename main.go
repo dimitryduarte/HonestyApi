@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/dimitryduarte/honestyapi/models"
 	"github.com/gorilla/mux"
@@ -27,6 +28,8 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
+
+	port := os.Getenv("PORT")
 
 	db.AutoMigrate(
 		//&models.Users{},
@@ -52,7 +55,7 @@ func main() {
 	//DELETE
 	router.HandleFunc("/product/{id}", DeleteProduct).Methods("DELETE")
 
-	log.Fatal(http.ListenAndServe(":8000", router))
+	log.Fatal(http.ListenAndServe(":"+port, router))
 }
 
 //Endpoints
