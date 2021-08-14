@@ -6,213 +6,19 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/go-redis/redis/v7"
+	"github.com/dimitryduarte/honestyapi/models"
 	"github.com/gorilla/mux"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
-type Users struct {
-	IdUser   uint64 `gorm:"column:id;primaryKey;autoIncrement"`
-	username string `gorm:"column:username"`
-	password string `gorm:"column:password"`
-}
-
-type Logins struct {
-	username string
-	password string
-}
-
-type TokenDetails struct {
-	AccessToken  string
-	RefreshToken string
-	AccessUuid   string
-	RefreshUuid  string
-	AtExpires    int64
-	RtExpires    int64
-}
-
-type Todo struct {
-	UserID uint64 `json:"user_id"`
-	Title  string `json:"title"`
-}
-
-type Company struct {
-	IdCompany   int64  `json:"idcompany" gorm:"column:id;primaryKey;autoIncrement"`
-	CompanyName string `json:"companyname" gorm:"column:companyname"`
-	Name        string `json:"name" gorm:"column:name"`
-	Cnpj        string `json:"cnpj" gorm:"column:cnpj"`
-	TaxesId     int64  `json:"taxesid" gorm:"column:TaxesId"`
-	Taxes       Taxes  `json:"taxes" gorm:"foreignKey:TaxesId;References:id"`
-}
-
-type Taxes struct {
-	TaxesId int64   `json:"taxesid" gorm:"column:id;primaryKey;autoIncrement"`
-	Taxa1   float64 `json:"taxa1" gorm:"column:taxa1"`
-	Taxa2   float64 `json:"taxa2" gorm:"column:taxa2"`
-	Taxa3   float64 `json:"taxa3" gorm:"column:taxa3"`
-}
-
 var err error
-var company Company
-var taxes Taxes
+var users models.Users
+var products models.Product
 var dsn = "test_user:123456@tcp(127.0.0.1:3306)/honestyapp"
-var client *redis.Client
+var tempToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhvbmVzdHlib3hAeWFob28uY29tLmJyIiwibmFtZSI6IkhvbmVzdHlCb3giLCJpYXQiOjgwMDEyMzIwMjN9.d6EzSrGrQkwtscnY0KmFfOnj3arratQoEBG1-gk_ZdA"
 
-//Endpoints
-
-func GetCompany(resp http.ResponseWriter, req *http.Request) {
-	var empresa []Company
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic(err.Error())
-	}
-
-	result := db.Find(&empresa)
-
-	if result.RowsAffected == 0 {
-		json.NewEncoder(resp).Encode("{errorMessage: Não foram encontradas empresas para o Id informado}")
-		return
-	} else {
-		json.NewEncoder(resp).Encode(empresa)
-		return
-	}
-}
-
-func GetTaxes(resp http.ResponseWriter, req *http.Request) {
-	var taxes []Taxes
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic(err.Error())
-	}
-
-	result := db.Find(&taxes)
-
-	if result.RowsAffected == 0 {
-		json.NewEncoder(resp).Encode("{errorMessage: Não foram encontradas taxas para o Id informado}")
-		return
-	} else {
-		json.NewEncoder(resp).Encode(taxes)
-		return
-	}
-}
-
-func GetCompanyId(resp http.ResponseWriter, req *http.Request) {
-	params := mux.Vars(req)
-	var empresa Company
-	var taxas Taxes
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic(err.Error())
-	}
-
-	db.Find(&empresa, params["id"])
-	db.Find(&taxas, empresa.TaxesId)
-	empresa.Taxes = taxas
-	json.NewEncoder(resp).Encode(empresa)
-}
-
-func GetTaxesId(resp http.ResponseWriter, req *http.Request) {
-	params := mux.Vars(req)
-	var taxas Taxes
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic(err.Error())
-	}
-
-	db.Find(&taxas, params["id"])
-	json.NewEncoder(resp).Encode(taxas)
-}
-
-func CreateCompany(resp http.ResponseWriter, req *http.Request) {
-	var newcompany Company
-
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic(err.Error())
-	}
-
-	reqBody, _ := ioutil.ReadAll(req.Body)
-	json.Unmarshal(reqBody, &newcompany)
-
-	db.Create(&newcompany)
-	json.NewEncoder(resp).Encode(newcompany.IdCompany)
-}
-
-func CreateTaxes(resp http.ResponseWriter, req *http.Request) {
-	var newtaxes Taxes
-
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic(err.Error())
-	}
-
-	reqBody, _ := ioutil.ReadAll(req.Body)
-	json.Unmarshal(reqBody, &newtaxes)
-
-	db.Create(&newtaxes)
-
-}
-
-func UpdateCompany(rep http.ResponseWriter, req *http.Request) {
-	var newcompany Company
-	var empresa Company
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic(err.Error())
-	}
-
-	reqBody, _ := ioutil.ReadAll(req.Body)
-	json.Unmarshal(reqBody, &newcompany)
-
-	db.Find(&empresa, &newcompany.IdCompany)
-
-	empresa = newcompany
-
-	db.Save(&empresa)
-}
-
-func UpdateTaxes(rep http.ResponseWriter, req *http.Request) {
-	var newtax Taxes
-	var taxes Taxes
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic(err.Error())
-	}
-
-	reqBody, _ := ioutil.ReadAll(req.Body)
-	json.Unmarshal(reqBody, &newtax)
-
-	db.Find(&taxes, &newtax.TaxesId)
-
-	taxes = newtax
-
-	db.Save(&taxes)
-}
-
-func DeleteCompany(resp http.ResponseWriter, req *http.Request) {
-	params := mux.Vars(req)
-
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic(err.Error())
-	}
-
-	db.Delete(&Company{}, params["id"])
-
-}
-
-func DeleteTax(resp http.ResponseWriter, req *http.Request) {
-	params := mux.Vars(req)
-
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic(err.Error())
-	}
-
-	db.Delete(&Taxes{}, params["id"])
-
-}
+//var dsn = "bc3ac486906125:9da0ccaf@us-cdbr-east-04.cleardb.com/heroku_94037f830475225?reconnect=true"
 
 // função principal
 func main() {
@@ -222,9 +28,8 @@ func main() {
 	}
 
 	db.AutoMigrate(
-		&Taxes{},
-		&Company{},
-		&Users{},
+		//&models.Users{},
+		&models.Product{},
 	)
 	//Seed
 	//db.&User{}).Save((&User{username: "admin", password: "123456", status: "A"}))
@@ -233,22 +38,146 @@ func main() {
 
 	//Declaração dos Endpoints
 	//GET
-	router.HandleFunc("/company", GetCompany).Methods("GET")
-	router.HandleFunc("/taxes", GetTaxes).Methods("GET")
-	router.HandleFunc("/company/{id}", GetCompanyId).Methods("GET")
-	router.HandleFunc("/taxes/{id}", GetTaxesId).Methods("GET")
+	router.HandleFunc("/product", GetProduct).Methods("GET")
+	router.HandleFunc("/product/{id}", GetProductId).Methods("GET")
 
 	//POST
-	router.HandleFunc("/company", CreateCompany).Methods("POST")
-	router.HandleFunc("/taxes", CreateTaxes).Methods("POST")
+	router.HandleFunc("/login", Login).Methods("POST")
+	router.HandleFunc("/product", CreateProduct).Methods("POST")
 
 	//PUT
-	router.HandleFunc("/company", UpdateCompany).Methods("PUT")
-	router.HandleFunc("/taxes", UpdateTaxes).Methods("PUT")
+	router.HandleFunc("/product", UpdateProduct).Methods("PUT")
 
 	//DELETE
-	router.HandleFunc("/company/{id}", DeleteCompany).Methods("DELETE")
-	router.HandleFunc("/taxes/{id}", DeleteTax).Methods("DELETE")
+	router.HandleFunc("/product/{id}", DeleteProduct).Methods("DELETE")
 
 	log.Fatal(http.ListenAndServe(":8000", router))
+}
+
+//Endpoints
+
+func Login(resp http.ResponseWriter, req *http.Request) {
+	var token models.TokenDetails
+	var login models.Logins
+
+	reqBody, _ := ioutil.ReadAll(req.Body)
+
+	json.Unmarshal(reqBody, &login)
+
+	if login.Email == "honestybox@yahoo.com.br" && login.Password == "H0n3styB0X" {
+		token.AccessToken = tempToken
+		json.NewEncoder(resp).Encode(token)
+	} else {
+		json.NewEncoder(resp).Encode("Usuário ou senha inválido!")
+	}
+}
+
+func GetProduct(resp http.ResponseWriter, req *http.Request) {
+	if req.Header.Get("accessToken") != tempToken {
+		json.NewEncoder(resp).Encode("errorMessage: A autenticação falhou, verifique o accessToken informado")
+		return
+	}
+
+	var products []models.Product
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err != nil {
+		panic(err.Error())
+	}
+
+	result := db.Find(&products)
+
+	if result.RowsAffected == 0 {
+		json.NewEncoder(resp).Encode("{errorMessage: Não foram encontrados produtos para o Id informado}")
+		return
+	} else {
+		json.NewEncoder(resp).Encode(products)
+		return
+	}
+}
+
+func GetProductId(resp http.ResponseWriter, req *http.Request) {
+
+	if req.Header.Get("accessToken") != tempToken {
+		json.NewEncoder(resp).Encode("errorMessage: A autenticação falhou, verifique o accessToken informado")
+		return
+	}
+
+	params := mux.Vars(req)
+	var product models.Product
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err != nil {
+		panic(err.Error())
+	}
+
+	result := db.Find(&product, params["id"])
+
+	if result.RowsAffected == 0 {
+		json.NewEncoder(resp).Encode("{errorMessage: Não foram encontrados produtos para o Id informado}")
+		return
+	} else {
+		json.NewEncoder(resp).Encode(product)
+
+	}
+}
+
+func CreateProduct(resp http.ResponseWriter, req *http.Request) {
+
+	if req.Header.Get("accessToken") != tempToken {
+		json.NewEncoder(resp).Encode("errorMessage: A autenticação falhou, verifique o accessToken informado")
+		return
+	}
+
+	var newProduct models.Product
+
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err != nil {
+		panic(err.Error())
+	}
+
+	reqBody, _ := ioutil.ReadAll(req.Body)
+	json.Unmarshal(reqBody, &newProduct)
+
+	db.Create(&newProduct)
+	json.NewEncoder(resp).Encode(newProduct.IdProduct)
+}
+
+func UpdateProduct(rep http.ResponseWriter, req *http.Request) {
+
+	if req.Header.Get("accessToken") != tempToken {
+		json.NewEncoder(rep).Encode("errorMessage: A autenticação falhou, verifique o accessToken informado")
+		return
+	}
+
+	var newproduct models.Product
+	var produto models.Product
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err != nil {
+		panic(err.Error())
+	}
+
+	reqBody, _ := ioutil.ReadAll(req.Body)
+	json.Unmarshal(reqBody, &newproduct)
+
+	db.Find(&produto, &newproduct.IdProduct)
+
+	produto = newproduct
+
+	db.Save(&produto)
+}
+
+func DeleteProduct(resp http.ResponseWriter, req *http.Request) {
+
+	if req.Header.Get("accessToken") != tempToken {
+		json.NewEncoder(resp).Encode("errorMessage: A autenticação falhou, verifique o accessToken informado")
+		return
+	}
+
+	params := mux.Vars(req)
+
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err != nil {
+		panic(err.Error())
+	}
+
+	db.Delete(&models.Product{}, params["id"])
 }

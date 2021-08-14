@@ -1,4 +1,4 @@
-module rest-api
+module github.com/dimitryduarte/honestyapi
 
 // +heroku goVersion go1.15
 go 1.15
@@ -10,6 +10,7 @@ require (
 	github.com/go-redis/redis/v7 v7.4.0
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/gorilla/mux v1.8.0
+	github.com/joho/godotenv v1.3.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/myesui/uuid v1.0.0 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
