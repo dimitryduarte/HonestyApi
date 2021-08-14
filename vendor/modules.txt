@@ -1,0 +1,55 @@
+# github.com/davecgh/go-spew v1.1.1
+## explicit
+# github.com/dgrijalva/jwt-go v3.2.0+incompatible
+## explicit
+# github.com/fsnotify/fsnotify v1.4.9
+## explicit
+# github.com/go-redis/redis/v7 v7.4.0
+## explicit
+# github.com/go-sql-driver/mysql v1.6.0
+github.com/go-sql-driver/mysql
+# github.com/golang/protobuf v1.5.2
+## explicit
+# github.com/gorilla/mux v1.8.0
+## explicit
+github.com/gorilla/mux
+# github.com/jinzhu/inflection v1.0.0
+github.com/jinzhu/inflection
+# github.com/jinzhu/now v1.1.2
+github.com/jinzhu/now
+# github.com/joho/godotenv v1.3.0
+## explicit
+# github.com/kr/text v0.2.0
+## explicit
+# github.com/myesui/uuid v1.0.0
+## explicit
+# github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e
+## explicit
+# github.com/pmezard/go-difflib v1.0.0
+## explicit
+# github.com/twinj/uuid v1.0.0
+## explicit
+# golang.org/x/net v0.0.0-20210510120150-4163338589ed
+## explicit
+# golang.org/x/sys v0.0.0-20210514084401-e8d321eab015
+## explicit
+# golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1
+## explicit
+# gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f
+## explicit
+# gopkg.in/stretchr/testify.v1 v1.2.2
+## explicit
+# gopkg.in/yaml.v2 v2.4.0
+## explicit
+# gorm.io/driver/mysql v1.1.0
+## explicit
+gorm.io/driver/mysql
+# gorm.io/gorm v1.21.10
+## explicit
+gorm.io/gorm
+gorm.io/gorm/callbacks
+gorm.io/gorm/clause
+gorm.io/gorm/logger
+gorm.io/gorm/migrator
+gorm.io/gorm/schema
+gorm.io/gorm/utils
