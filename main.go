@@ -52,7 +52,7 @@ func main() {
 	//DELETE
 	router.HandleFunc("/product/{id}", DeleteProduct).Methods("DELETE")
 
-	log.Fatal(http.ListenAndServe(":80", router))
+	log.Fatal(http.ListenAndServe(":8000", router))
 }
 
 //Endpoints
