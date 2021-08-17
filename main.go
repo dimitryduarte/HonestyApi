@@ -16,7 +16,7 @@ import (
 )
 
 var err error
-var users models.Users
+var users models.User
 var products models.Product
 
 var db_host = os.Getenv("DB_HOST")
@@ -28,7 +28,6 @@ var apisecret = os.Getenv("API_SECRET")
 var tempToken = os.Getenv("TOKEN")
 
 //var dsn = "test_user:123456@tcp(127.0.0.1:3306)/honestyapp"
-
 //var dsn = "bc3ac486906125:9da0ccaf@tcp(us-cdbr-east-04.cleardb.com:3306)/heroku_94037f830475225"
 
 var dsn = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", db_user, db_password, db_host, db_port, db_name)
@@ -43,11 +42,12 @@ func main() {
 	port := os.Getenv("PORT")
 
 	db.AutoMigrate(
-		//&models.Users{},
+		&models.User{},
 		&models.Product{},
 	)
 	//Seed
-	//db.&User{}).Save((&User{username: "admin", password: "123456", status: "A"}))
+	db.Create(models.User{Email: "honestybox@yahoo.com.br", Password: "H0n3styB0X", Name: "Admin", Company: "HonestyBox"})
+	db.Create(models.User{Email: "dimitry.brito@q2pay.com.br", Password: "41146918801", Name: "Dimitry Duarte", Company: "Q2Pay", Sector: "TI", Wallet: 85.50})
 
 	router := mux.NewRouter()
 

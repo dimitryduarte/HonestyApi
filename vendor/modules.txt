@@ -1,3 +1,6 @@
+# github.com/badoux/checkmail v1.2.1
+## explicit
+github.com/badoux/checkmail
 # github.com/davecgh/go-spew v1.1.1
 ## explicit
 # github.com/dgrijalva/jwt-go v3.2.0+incompatible
@@ -16,6 +19,9 @@ github.com/golang-jwt/jwt/v4
 # github.com/gorilla/mux v1.8.0
 ## explicit
 github.com/gorilla/mux
+# github.com/jinzhu/gorm v1.9.16
+## explicit
+github.com/jinzhu/gorm
 # github.com/jinzhu/inflection v1.0.0
 github.com/jinzhu/inflection
 # github.com/jinzhu/now v1.1.2
@@ -33,9 +39,11 @@ github.com/joho/godotenv
 ## explicit
 # github.com/twinj/uuid v1.0.0
 ## explicit
-# golang.org/x/net v0.0.0-20210510120150-4163338589ed
+# golang.org/x/crypto v0.0.0-20210813211128-0a44fdfbc16e
 ## explicit
-# golang.org/x/sys v0.0.0-20210514084401-e8d321eab015
+golang.org/x/crypto/bcrypt
+golang.org/x/crypto/blowfish
+# golang.org/x/net v0.0.0-20210510120150-4163338589ed
 ## explicit
 # golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1
 ## explicit
