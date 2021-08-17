@@ -12,7 +12,7 @@ type TokenDetails struct {
 	RefreshUuid  string  `json:"RefreshUuid"`
 	AtExpires    int64   `json:"AtExpires"`
 	RtExpires    int64   `json:"RtExpires"`
-	User         string  `json:"User"`
+	UserName     string  `json:"UserName"`
 	Wallet       float32 `json:"Wallet"`
 }
 

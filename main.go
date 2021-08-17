@@ -71,8 +71,8 @@ func Login(resp http.ResponseWriter, req *http.Request) {
 
 	if login.Email == "honestybox@yahoo.com.br" && login.Password == "H0n3styB0X" {
 		token.AccessToken = tempToken
-		token.User = "Dimitry"
-		token.Wallet = (rand.Float32() * 10)
+		token.UserName = "Dimitry"
+		token.Wallet = (rand.Float32() * 100)
 		json.NewEncoder(resp).Encode(token)
 	} else {
 		json.NewEncoder(resp).Encode("Usuário ou senha inválido!")
