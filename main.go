@@ -46,8 +46,8 @@ func main() {
 		&models.Product{},
 	)
 	//Seed
-	db.Create(models.User{Email: "honestybox@yahoo.com.br", Password: "H0n3styB0X", Name: "Admin", Company: "HonestyBox"})
-	db.Create(models.User{Email: "dimitry.brito@q2pay.com.br", Password: "41146918801", Name: "Dimitry Duarte", Company: "Q2Pay", Sector: "TI", Wallet: 85.50})
+	//db.Create(models.User{Email: "honestybox@yahoo.com.br", Password: "H0n3styB0X", Name: "Admin", Company: "HonestyBox"})
+	//db.Create(models.User{Email: "dimitry.brito@q2pay.com.br", Password: "41146918801", Name: "Dimitry Duarte", Company: "Q2Pay", Sector: "TI", Wallet: 85.50})
 
 	router := mux.NewRouter()
 
