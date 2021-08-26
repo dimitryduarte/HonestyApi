@@ -28,6 +28,7 @@ var apisecret = os.Getenv("API_SECRET")
 var tempToken = os.Getenv("TOKEN")
 
 //var dsn = "test_user:123456@tcp(127.0.0.1:3306)/honestyapp"
+
 //var dsn = "bc3ac486906125:9da0ccaf@tcp(us-cdbr-east-04.cleardb.com:3306)/heroku_94037f830475225"
 
 var dsn = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", db_user, db_password, db_host, db_port, db_name)
@@ -83,14 +84,17 @@ func Login(resp http.ResponseWriter, req *http.Request) {
 		token.AccessToken = tempToken
 		token.UserName = "Dimitry"
 		token.Wallet = (rand.Float32() * 100)
+		resp.WriteHeader(http.StatusOK)
 		json.NewEncoder(resp).Encode(token)
 	} else {
+		resp.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(resp).Encode("Usuário ou senha inválido!")
 	}
 }
 
 func GetProduct(resp http.ResponseWriter, req *http.Request) {
 	if req.Header.Get("accessToken") != tempToken {
+		resp.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(resp).Encode("errorMessage: A autenticação falhou, verifique o accessToken informado")
 		return
 	}
@@ -104,6 +108,7 @@ func GetProduct(resp http.ResponseWriter, req *http.Request) {
 	result := db.Find(&products)
 
 	if result.RowsAffected == 0 {
+		resp.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(resp).Encode("{errorMessage: Não foram encontrados produtos para o Id informado}")
 		return
 	} else {
@@ -115,6 +120,7 @@ func GetProduct(resp http.ResponseWriter, req *http.Request) {
 func GetProductId(resp http.ResponseWriter, req *http.Request) {
 
 	if req.Header.Get("accessToken") != tempToken {
+		resp.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(resp).Encode("errorMessage: A autenticação falhou, verifique o accessToken informado")
 		return
 	}
@@ -129,9 +135,11 @@ func GetProductId(resp http.ResponseWriter, req *http.Request) {
 	result := db.Find(&product, params["id"])
 
 	if result.RowsAffected == 0 {
+		resp.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(resp).Encode("{errorMessage: Não foram encontrados produtos para o Id informado}")
 		return
 	} else {
+		resp.WriteHeader(http.StatusOK)
 		json.NewEncoder(resp).Encode(product)
 
 	}
@@ -140,6 +148,7 @@ func GetProductId(resp http.ResponseWriter, req *http.Request) {
 func CreateProduct(resp http.ResponseWriter, req *http.Request) {
 
 	if req.Header.Get("accessToken") != tempToken {
+		resp.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(resp).Encode("errorMessage: A autenticação falhou, verifique o accessToken informado")
 		return
 	}
@@ -155,12 +164,14 @@ func CreateProduct(resp http.ResponseWriter, req *http.Request) {
 	json.Unmarshal(reqBody, &newProduct)
 
 	db.Create(&newProduct)
+	resp.WriteHeader(http.StatusCreated)
 	json.NewEncoder(resp).Encode(newProduct.IdProduct)
 }
 
 func UpdateProduct(rep http.ResponseWriter, req *http.Request) {
 
 	if req.Header.Get("accessToken") != tempToken {
+		rep.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(rep).Encode("errorMessage: A autenticação falhou, verifique o accessToken informado")
 		return
 	}
@@ -185,6 +196,7 @@ func UpdateProduct(rep http.ResponseWriter, req *http.Request) {
 func DeleteProduct(resp http.ResponseWriter, req *http.Request) {
 
 	if req.Header.Get("accessToken") != tempToken {
+		resp.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(resp).Encode("errorMessage: A autenticação falhou, verifique o accessToken informado")
 		return
 	}
