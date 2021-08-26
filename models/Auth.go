@@ -1,19 +1,11 @@
 package models
 
-type Logins struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
 type TokenDetails struct {
-	AccessToken  string  `json:"AccessToken"`
-	RefreshToken string  `json:"RefreshToken"`
-	AccessUuid   string  `json:"AccessUuid"`
-	RefreshUuid  string  `json:"RefreshUuid"`
-	AtExpires    int64   `json:"AtExpires"`
-	RtExpires    int64   `json:"RtExpires"`
-	UserName     string  `json:"UserName"`
-	Wallet       float32 `json:"Wallet"`
+	AccessToken string  `json:"accessToken"`
+	UserName    string  `json:"userName"`
+	Company     string  `json:"company"`
+	Sector      string  `json:"sector"`
+	Wallet      float32 `json:"wallet"`
 }
 
 type Todo struct {

@@ -24,16 +24,20 @@ func CreateToken(user_id uint32) (string, error) {
 
 func TokenValid(r *http.Request) error {
 	tokenString := ExtractToken(r)
+	fmt.Println("Token String: " + tokenString)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
+		fmt.Println("API SECRET: " + os.Getenv("API_SECRET"))
 		return []byte(os.Getenv("API_SECRET")), nil
 	})
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		fmt.Println("Entrando no pretty")
 		Pretty(claims)
 	}
 	return nil
