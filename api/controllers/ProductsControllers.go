@@ -159,7 +159,7 @@ func (server *Server) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 
 	// Check if the product exist
 	product := models.Product{}
-	err = server.DB.Debug().Model(models.Product{}).Where("id = ?", product.IdProduct).Take(&product).Error
+	err = server.DB.Debug().Model(models.Product{}).Where("id = ?", productUpdate.IdProduct).Take(&product).Error
 	if err != nil {
 		responses.ERROR(w, http.StatusNotFound, errors.New("product not found"))
 		return

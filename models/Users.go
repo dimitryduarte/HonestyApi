@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/badoux/checkmail"
-	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 type User struct {
@@ -19,6 +19,11 @@ type User struct {
 	Company  string  `json:"company" gorm:"column:company"`
 	Sector   string  `json:"sector" gorm:"column:sector"`
 	Wallet   float64 `json:"wallet" gorm:"column:wallet"`
+}
+
+type Recharge struct {
+	IdUser uint64  `json:"id"`
+	Value  float64 `json:"value"`
 }
 
 func Hash(password string) ([]byte, error) {
@@ -105,26 +110,24 @@ func (u *User) SaveUser(db *gorm.DB) (*User, error) {
 func (u *User) FindAllUsers(db *gorm.DB) (*[]User, error) {
 	var err error
 	users := []User{}
-	err = db.Debug().Model(&User{}).Limit(100).Find(&users).Error
+	err = db.Debug().Model(&User{}).Find(&users).Error
 	if err != nil {
 		return &[]User{}, err
 	}
 	return &users, err
 }
 
-func (u *User) FindUserByID(db *gorm.DB, uid uint32) (*User, error) {
+func (u *User) FindUserByID(db *gorm.DB, uid uint64) (*User, error) {
 	var err error
 	err = db.Debug().Model(User{}).Where("id = ?", uid).Take(&u).Error
 	if err != nil {
 		return &User{}, err
 	}
-	if gorm.IsRecordNotFoundError(err) {
-		return &User{}, errors.New("User Not Found")
-	}
+
 	return u, err
 }
 
-func (u *User) UpdateAUser(db *gorm.DB, uid uint32) (*User, error) {
+func (u *User) UpdateAUser(db *gorm.DB, uid uint64) (*User, error) {
 
 	// To hash the password
 	err := u.BeforeSave(db)
@@ -143,6 +146,24 @@ func (u *User) UpdateAUser(db *gorm.DB, uid uint32) (*User, error) {
 	}
 	// This is the display the updated user
 	err = db.Debug().Model(&User{}).Where("id = ?", uid).Take(&u).Error
+	if err != nil {
+		return &User{}, err
+	}
+	return u, nil
+}
+
+func (u *User) UpdateWallet(db *gorm.DB, uid uint64) (*User, error) {
+
+	db = db.Debug().Model(&User{}).Where("id = ?", uid).Take(&User{}).UpdateColumns(
+		map[string]interface{}{
+			"wallet": u.Wallet,
+		},
+	)
+	if db.Error != nil {
+		return &User{}, db.Error
+	}
+
+	err := db.Select("name", "wallet").Where("id = ?", uid).Take(&u).Error
 	if err != nil {
 		return &User{}, err
 	}
