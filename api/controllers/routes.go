@@ -17,9 +17,11 @@ func (s *Server) initializeRoutes() {
 	//POST
 	s.Router.HandleFunc("/product", middlewares.SetMiddlewareJSON(s.CreateProduct)).Methods("POST")
 	s.Router.HandleFunc("/user", middlewares.SetMiddlewareJSON(s.CreateUser)).Methods("POST")
+	s.Router.HandleFunc("/wallet", middlewares.SetMiddlewareJSON(s.UpdateWallet)).Methods("POST")
 
 	//PUT
 	s.Router.HandleFunc("/product", middlewares.SetMiddlewareJSON(s.UpdateProduct)).Methods("PUT")
+	s.Router.HandleFunc("/user", middlewares.SetMiddlewareJSON(s.UpdateUser)).Methods("PUT")
 
 	//DELETE
 	s.Router.HandleFunc("/product/{id}", middlewares.SetMiddlewareJSON(s.DeleteProduct)).Methods("DELETE")
